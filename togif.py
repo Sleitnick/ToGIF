@@ -19,12 +19,6 @@ def is_int(s):
 	except ValueError:
 		return False
 
-# Assertion whether string is a non-zero positive integer:
-def assert_is_positive_int(s, errMsg):
-	is_str_int = is_int(s)
-	if (not is_str_int) or (int(s) <= 0):
-		raise Exception(errMsg)
-
 # Command-line arguments:
 parser = argparse.ArgumentParser(prog="togif")
 parser.add_argument("-v", "--video", required=True)
@@ -45,10 +39,10 @@ scale      = args.scale
 
 # Argument assertions:
 assert os.path.isfile(video_file), "Video file (-v, --video) argument must point to an existing file"
-assert_is_positive_int(fps, "FPS (-f, --fps) argument must be an integer > 0")
-assert_is_positive_int(start, "Start (-s, --start) argument must be an integer > 0")
-assert_is_positive_int(length, "Length (-l, --length) argument must be an integer > 0")
-assert_is_positive_int(scale, "Scale (-c, --scale) argument must be an integer > 0")
+assert is_int(fps) and int(fps) > 0, "FPS (-f, --fps) argument must be an integer > 0"
+assert is_int(start) and int(start) >= 0, "Start (-s, --start) argument must be an integer >= 0"
+assert is_int(length) and int(length) > 0, "Length (-l, --length) argument must be an integer > 0"
+assert is_int(scale) and int(scale) > 0, "Scale (-c, --scale) argument must be an integer > 0"
 
 # Append '.gif' prefix to GIF file if missing:
 if not gif_file.endswith(".gif"):
