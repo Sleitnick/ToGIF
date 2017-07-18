@@ -6,5 +6,14 @@ Convert video files to GIF files.
 - [ffmpeg](https://ffmpeg.org/)
 
 # Usage
-- **Linux/xOS:** Run `./togif` within the directory.
-- **Windows:** Run `togif.bat` within the directory.
+```
+togif.py -v VIDEO_FILE -g GIF_FILE -f FPS -s START -l LENGTH -c SCALE
+```
+| Argument    | Alias | Description
+| ----------- | ----- | -----------
+| `--video`   | `-v`  | Full video filepath source
+| `--gif`     | `-g`  | Full GIF filepath destination
+| `--fps`     | `-f`  | GIF frames-per-second
+| `--start`   | `-s`  | Starting point in video (seconds)
+| `--length`  | `-l`  | Length of GIF (seconds)
+| `--scale`   | `-c`  | Width of video (pixels)

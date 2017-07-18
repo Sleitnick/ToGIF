@@ -4,24 +4,76 @@
 
 from subprocess import call
 from tempfile import gettempdir
+import argparse
 import os
 
 PALETTE_NAME = os.path.join(gettempdir(), "pallete.png")
 
-os.system("cls" if os.name=="nt" else "clear")
-print("\n  ToGif - Convert Video to GIF\n")
+#os.system("cls" if os.name=="nt" else "clear")
+print("\nToGif - Convert Video to GIF\n")
 
-# Inputs from user:
-video_file = raw_input("  Video File: ")
-gif_file   = raw_input("    GIF File: ")
-fps        = raw_input("         FPS: ")
-start      = raw_input("       Start: ")
-length     = raw_input("      Length: ")
-scale      = raw_input("       Scale: ")
+def is_int(s):
+	try:
+		int(s)
+		return True
+	except ValueError:
+		return False
 
-# Call ffmpeg to convert video to GIF:
-call(["ffmpeg", "-y", "-ss", start, "-t", length, "-i", video_file, "-vf", "fps=" + fps + ",scale=" + scale + ":-1:flags=lanczos,palettegen", PALETTE_NAME])
-call(["ffmpeg", "-ss", start, "-t", length, "-i", video_file, "-i", PALETTE_NAME, "-filter_complex", "fps=" + fps + ",scale=" + scale + ":-1:flags=lanczos[x];[x][1:v]paletteuse", gif_file])
+# Assertion whether string is a non-zero positive integer:
+def assert_is_positive_int(s, errMsg):
+	is_str_int = is_int(s)
+	if (not is_str_int) or (int(s) <= 0):
+		raise Exception(errMsg)
+
+# Command-line arguments:
+parser = argparse.ArgumentParser(prog="togif")
+parser.add_argument("-v", "--video", required=True)
+parser.add_argument("-g", "--gif", required=True)
+parser.add_argument("-f", "--fps", required=True)
+parser.add_argument("-s", "--start", required=True)
+parser.add_argument("-l", "--length", required=True)
+parser.add_argument("-c", "--scale", required=True)
+args = parser.parse_args()
+
+# Arguments:
+video_file = args.video
+gif_file   = args.gif
+fps        = args.fps
+start      = args.start
+length     = args.length
+scale      = args.scale
+
+# Argument assertions:
+assert os.path.isfile(video_file), "Video file (-v, --video) argument must point to an existing file"
+assert_is_positive_int(fps, "FPS (-f, --fps) argument must be an integer > 0")
+assert_is_positive_int(start, "Start (-s, --start) argument must be an integer > 0")
+assert_is_positive_int(length, "Length (-l, --length) argument must be an integer > 0")
+assert_is_positive_int(scale, "Scale (-c, --scale) argument must be an integer > 0")
+
+# Append '.gif' prefix to GIF file if missing:
+if not gif_file.endswith(".gif"):
+	print("Appending '.gif' to GIF file:")
+	gif_file += ".gif"
+	print(gif_file)
+
+# FFmpeg generate pallete image:
+call([
+	"ffmpeg", "-y",
+	"-ss", start,
+	"-t", length,
+	"-i", video_file,
+	"-vf", "fps=" + fps + ",scale=" + scale + ":-1:flags=lanczos,palettegen", PALETTE_NAME
+])
+
+# FFmpeg generate GIF:
+call([
+	"ffmpeg",
+	"-ss", start,
+	"-t", length,
+	"-i", video_file,
+	"-i", PALETTE_NAME,
+	"-filter_complex", "fps=" + fps + ",scale=" + scale + ":-1:flags=lanczos[x];[x][1:v]paletteuse", gif_file
+])
 
 # Remove temporary palette image created from ffmpeg:
 os.remove(PALETTE_NAME)
