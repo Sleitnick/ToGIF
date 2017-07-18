@@ -1,6 +1,6 @@
-# Author:  Stephen Leitnick
-# Date:    July 17, 2017
-
+# Author:   Stephen Leitnick
+# Date:     July 17, 2017
+# License:  MIT
 
 from subprocess import call
 from tempfile import gettempdir
@@ -8,12 +8,7 @@ import os
 
 PALETTE_NAME = os.path.join(gettempdir(), "pallete.png")
 
-def cls():
-	os.system("cls" if os.name=="nt" else "clear")
-
-
-cls()
-
+os.system("cls" if os.name=="nt" else "clear")
 print("\n  ToGif - Convert Video to GIF\n")
 
 # Inputs from user:
