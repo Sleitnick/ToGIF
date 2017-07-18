@@ -1,6 +1,6 @@
 # Author:   Stephen Leitnick
 # Date:     July 17, 2017
-# License:  MIT
+# License:  MIT (see LICENSE file)
 
 from subprocess import call
 from tempfile import gettempdir
